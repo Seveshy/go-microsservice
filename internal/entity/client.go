@@ -16,6 +16,16 @@ type Client struct {
 	UpdatedAt time.Time
 }
 
+func (c *Client) Validate() error {
+	if c.Name == "" {
+		return errors.New("name is required")
+	}
+	if c.Email == "" {
+		return errors.New("email is required")
+	}
+	return nil
+}
+
 func NewClient(name string, email string) (*Client, error) {
 	client := &Client{
 		ID:        uuid.New().String(),
@@ -29,16 +39,6 @@ func NewClient(name string, email string) (*Client, error) {
 		return nil, err
 	}
 	return client, nil
-}
-
-func (c *Client) Validate() error {
-	if c.Name == "" {
-		return errors.New("name is required")
-	}
-	if c.Email == "" {
-		return errors.New("email is required")
-	}
-	return nil
 }
 
 func (c *Client) Update(name string, email string) error {
