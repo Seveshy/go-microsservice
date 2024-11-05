@@ -44,11 +44,21 @@ func (s *ClientDBTestSuite) TestSave() {
 }
 
 func (s *ClientDBTestSuite) TestGet() {
+	// Criação de um novo cliente e salvamento
 	client, _ := entity.NewClient("Daniel", "daniel@mail.com")
-	s.ClientDB.Save(client)
 
+	// Verifica se o cliente é salvo corretamente
+	err := s.ClientDB.Save(client)
+	s.Nil(err, "Erro ao salvar o cliente")
+
+	// Recuperação do cliente salvo
 	ClientDB, err := s.ClientDB.Get(client.ID)
-	s.Nil(err)
+	if err == sql.ErrNoRows {
+		s.T().Errorf("Cliente com ID %v não encontrado; nenhum registro foi retornado", client.ID)
+	}
+	s.Nil(err, "Erro ao buscar o cliente")
+
+	// Verificações dos campos do cliente
 	s.Equal(client.ID, ClientDB.ID)
 	s.Equal(client.Name, ClientDB.Name)
 	s.Equal(client.Email, ClientDB.Email)
