@@ -19,13 +19,13 @@ func (s *ClientDBTestSuite) SetupSuite() {
 	db, err := sql.Open("sqlite3", ":memory:")
 	s.Nil(err)
 	s.db = db
-	db.Exec("Create table clients (id varchar(255), name varchar(255), email varchar(255), created_at date)")
+	db.Exec("CREATE TABLE clients (id VARCHAR(255), name VARCHAR(255), email VARCHAR(255), created_at DATE)")
 	s.ClientDB = NewClientDB(db)
 }
 
 func (s *ClientDBTestSuite) TearDownSuite() {
-	defer s.db.Close()
 	s.db.Exec("DROP TABLE clients")
+	s.db.Close()
 }
 
 func TestClientDBTestSuite(t *testing.T) {
@@ -53,9 +53,6 @@ func (s *ClientDBTestSuite) TestGet() {
 
 	// Recuperação do cliente salvo
 	ClientDB, err := s.ClientDB.Get(client.ID)
-	if err == sql.ErrNoRows {
-		s.T().Errorf("Cliente com ID %v não encontrado; nenhum registro foi retornado", client.ID)
-	}
 	s.Nil(err, "Erro ao buscar o cliente")
 
 	// Verificações dos campos do cliente

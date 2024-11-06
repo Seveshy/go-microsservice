@@ -23,9 +23,9 @@ func (s *TransactionDBTestSuite) SetupSuite() {
 	db, err := sql.Open("sqlite3", ":memory:")
 	s.Nil(err)
 	s.db = db
-	db.Exec("Create table clients (id varchar(255), name varchar(255), email varchar(255), created_at date)")
-	db.Exec("Create table accounts (id varchar(255), client_id varchar(255), balance int, created_at date)")
-	db.Exec("Create table transactions (id varchar(255), account_id_from varchar(255), account_id_to varchar(255), amount int created_at date)")
+	db.Exec("CREATE TABLE clients (id VARCHAR(255), name VARCHAR(255), email VARCHAR(255), created_at DATE)")
+	db.Exec("CREATE TABLE accounts (id VARCHAR(255), client_id VARCHAR(255), balance INT, created_at DATE)")
+	db.Exec("CREATE TABLE transactions (id VARCHAR(255), account_id_from VARCHAR(255), account_id_to VARCHAR(255), amount INT, created_at DATE)")
 	client, err := entity.NewClient("Daniel", "daniel@mail.com")
 	s.Nil(err)
 	s.client = client
@@ -35,17 +35,18 @@ func (s *TransactionDBTestSuite) SetupSuite() {
 
 	accountFrom := entity.NewAccount(s.client)
 	accountFrom.Balance = 1000
+	s.accountFrom = accountFrom // Atribuição corrigida
 	accountTo := entity.NewAccount(s.client2)
 	accountTo.Balance = 1000
 	s.accountTo = accountTo
 	s.transactionDB = NewTransactionDB(db)
 }
 
-func (s *TransactionDBTestSuite) TearDownSuiteAccount() {
-	defer s.db.Close()
+func (s *TransactionDBTestSuite) TearDownSuite() {
 	s.db.Exec("DROP TABLE clients")
 	s.db.Exec("DROP TABLE accounts")
 	s.db.Exec("DROP TABLE transactions")
+	s.db.Close()
 }
 
 func TestTransactionsDBTestSuite(t *testing.T) {
